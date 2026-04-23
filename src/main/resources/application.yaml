@@ -1,3 +1,14 @@
 spring:
   application:
     name: User-Service_SupplyChain
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/UserService_supplyChain
+    username: root
+    password: Pranav@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port : 8082
