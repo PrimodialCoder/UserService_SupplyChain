@@ -35,11 +35,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
     public ResponseEntity<Void> logout(@RequestBody LogoutRequestDto logoutRequestDto) {
-        return null;
+        //Invalidate the token
+        //Either set the deleted to true or set the expiry date to current date, or delete from db
+        userService.logout(logoutRequestDto.getTokenValue());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/validate/{token}")
     public ResponseEntity<Boolean> validateToken(@PathVariable("token") String tokenValue) {
-        return null;
+        User user = userService.validateToken(tokenValue);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+        return ResponseEntity.ok().body(true);
     }
 }

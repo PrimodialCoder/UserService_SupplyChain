@@ -28,4 +28,12 @@ public class GlobleExceptionHandler {
         return errorDto;
     }
 
+    @ExceptionHandler(TokenDoesNotExistException.class)
+    public ErrorDto HandleTokenDoesNotExistException(TokenDoesNotExistException e) {
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setMessage(e.getMessage());
+        errorDto.setStatus("FAILURE");
+        return errorDto;
+    }
+
 }

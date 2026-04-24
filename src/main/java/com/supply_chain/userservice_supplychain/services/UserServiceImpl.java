@@ -1,6 +1,7 @@
 package com.supply_chain.userservice_supplychain.services;
 
 import com.supply_chain.userservice_supplychain.exceptions.PasswordNotMatchedException;
+import com.supply_chain.userservice_supplychain.exceptions.TokenDoesNotExistException;
 import com.supply_chain.userservice_supplychain.exceptions.UserAlreadyExistException;
 import com.supply_chain.userservice_supplychain.exceptions.UserNotFoundException;
 import com.supply_chain.userservice_supplychain.models.Token;
@@ -65,17 +66,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void logout(Token token) {
-
+    public void logout(String token) {
+        Token tokenFromDb = tokenRepository.findByTokenValue(token).orElseThrow(() -> new UserNotFoundException("User with Token not found"));
+        tokenFromDb.setDeleted(true);
+        tokenRepository.save(tokenFromDb);
     }
 
     @Override
-    public Boolean validateToken(String tokenValue) {
+    public User validateToken(String tokenValue) {
         /*
         * 1. Exists in DB
         * 2. Not deleted
         * 3. Not expired
         * */
-        return null;
+        Optional<Token> tokenOptional = tokenRepository.findByTokenValueAndDeletedAndExpiryAtGreaterThan(tokenValue, false, new Date());
+        if(tokenOptional.isEmpty()) {
+            throw new TokenDoesNotExistException("Token does not exist");
+        }
+        Token token = tokenOptional.get();
+        return token.getUser();
     }
 }
